@@ -815,6 +815,8 @@ pub fn sub_sup_run() -> App<'static, 'static> {
             "The listen address for the gossip system [default: 0.0.0.0:9638]")
         (@arg LISTEN_HTTP: --("listen-http") +takes_value {valid_socket_addr}
             "The listen address for the HTTP Gateway [default: 0.0.0.0:9631]")
+        (@arg HTTP_DISABLE: --("http-disable") -D
+            "Disable the HTTP Gateway completely [default: false]")
         (@arg LISTEN_CTL: --("listen-ctl") +takes_value {valid_socket_addr}
             "The listen address for the Control Gateway [default: 127.0.0.1:9632]")
         (@arg NAME: --("override-name") +takes_value

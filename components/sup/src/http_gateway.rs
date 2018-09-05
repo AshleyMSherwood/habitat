@@ -155,33 +155,38 @@ struct HealthCheckBody {
 }
 
 // Proxy for butterfly::Server struct
-#[derive(Debug)]
-struct ButterflyServer {
-    member: butterfly::member::MemberList,
-    service: butterfly::rumor::RumorStore<butterfly::rumor::service::Service>,
-    service_config: butterfly::rumor::RumorStore<butterfly::rumor::service_config::ServiceConfig>,
-    service_file: butterfly::rumor::RumorStore<butterfly::rumor::service_file::ServiceFile>,
-    election: butterfly::rumor::RumorStore<butterfly::rumor::election::Election>,
-    election_update: butterfly::rumor::RumorStore<butterfly::rumor::election::ElectionUpdate>,
-    departure: butterfly::rumor::RumorStore<butterfly::rumor::departure::Departure>,
+#[derive(Debug, Serialize)]
+struct ButterflyServer<'a> {
+    member: Cow<'a, butterfly::member::MemberList>,
+    service: Cow<'a, butterfly::rumor::RumorStore<butterfly::rumor::service::Service>>,
+    service_config:
+        Cow<'a, butterfly::rumor::RumorStore<butterfly::rumor::service_config::ServiceConfig>>,
+    service_file:
+        Cow<'a, butterfly::rumor::RumorStore<butterfly::rumor::service_file::ServiceFile>>,
+    election: Cow<'a, butterfly::rumor::RumorStore<butterfly::rumor::election::Election>>,
+    election_update:
+        Cow<'a, butterfly::rumor::RumorStore<butterfly::rumor::election::ElectionUpdate>>,
+    departure: Cow<'a, butterfly::rumor::RumorStore<butterfly::rumor::departure::Departure>>,
 }
 
-impl Serialize for ButterflyServer {
-    fn serialize<S>(&self, serializer: S) -> result::Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        let mut strukt = serializer.serialize_struct("butterfly", 7)?;
-        strukt.serialize_field("member", &self.member)?;
-        strukt.serialize_field("service", &self.service)?;
-        strukt.serialize_field("service_config", &self.service_config)?;
-        strukt.serialize_field("service_file", &self.service_file)?;
-        strukt.serialize_field("election", &self.election)?;
-        strukt.serialize_field("election_update", &self.election_update)?;
-        strukt.serialize_field("departure", &self.departure)?;
-        strukt.end()
-    }
-}
+// TODO JB: we likely don't need the below code at all, since we should be able to just derive it
+// on the struct above
+// impl Serialize for ButterflyServer {
+//     fn serialize<S>(&self, serializer: S) -> result::Result<S::Ok, S::Error>
+//     where
+//         S: Serializer,
+//     {
+//         let mut strukt = serializer.serialize_struct("butterfly", 7)?;
+//         strukt.serialize_field("member", &self.member)?;
+//         strukt.serialize_field("service", &self.service)?;
+//         strukt.serialize_field("service_config", &self.service_config)?;
+//         strukt.serialize_field("service_file", &self.service_file)?;
+//         strukt.serialize_field("election", &self.election)?;
+//         strukt.serialize_field("election_update", &self.election_update)?;
+//         strukt.serialize_field("departure", &self.departure)?;
+//         strukt.end()
+//     }
+// }
 
 // Begin route handlers
 fn butterfly(req: &mut Request) -> IronResult<Response> {
